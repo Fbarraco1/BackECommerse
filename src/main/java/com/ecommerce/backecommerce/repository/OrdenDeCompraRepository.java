@@ -1,7 +1,8 @@
 package com.ecommerce.backecommerce.repository;
 
 import com.ecommerce.backecommerce.entity.OrdenDeCompra;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface OrdenDeCompraRepository extends JpaRepository<OrdenDeCompra, Long> {
+@Repository
+public interface OrdenDeCompraRepository extends BaseRepository<OrdenDeCompra, Long> {
 }

@@ -13,10 +13,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Tipo {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idTipo;
+public class Tipo extends Base{
     private String nombre;
 }
 

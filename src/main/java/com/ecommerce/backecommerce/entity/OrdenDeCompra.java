@@ -13,11 +13,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrdenDeCompra {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+public class OrdenDeCompra extends Base{
     @ManyToOne
     private com.ecommerce.backecommerce.entity.Usuario usuario;
 

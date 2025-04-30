@@ -1,6 +1,7 @@
 package com.ecommerce.backecommerce.repository;
 import com.ecommerce.backecommerce.entity.Usuario;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
+@Repository
+public interface UsuarioRepository extends BaseRepository<Usuario, Long> {
 }

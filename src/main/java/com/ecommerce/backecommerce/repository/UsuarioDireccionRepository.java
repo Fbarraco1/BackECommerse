@@ -1,7 +1,8 @@
 package com.ecommerce.backecommerce.repository;
 
 import com.ecommerce.backecommerce.entity.UsuarioDireccion;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface UsuarioDireccionRepository extends JpaRepository<UsuarioDireccion, Long> {
+@Repository
+public interface UsuarioDireccionRepository extends BaseRepository<UsuarioDireccion, Long> {
 }

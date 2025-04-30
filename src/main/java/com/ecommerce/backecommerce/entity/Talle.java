@@ -10,10 +10,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Talle {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idTalle;
+public class Talle extends Base{
     private String tipoTalle;
 
     @ManyToOne

@@ -1,7 +1,8 @@
 package com.ecommerce.backecommerce.repository;
 
 import com.ecommerce.backecommerce.entity.DetalleOrden;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface DetalleOrdenRepository extends JpaRepository<DetalleOrden, Long> {
+@Repository
+public interface DetalleOrdenRepository extends BaseRepository<DetalleOrden, Long> {
 }

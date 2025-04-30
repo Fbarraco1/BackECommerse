@@ -1,7 +1,8 @@
 package com.ecommerce.backecommerce.repository;
 
 import com.ecommerce.backecommerce.entity.Tipo;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface TipoRepository extends JpaRepository<Tipo, Long> {
+@Repository
+public interface TipoRepository extends BaseRepository<Tipo, Long> {
 }

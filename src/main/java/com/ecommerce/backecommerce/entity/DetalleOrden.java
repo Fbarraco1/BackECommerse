@@ -10,10 +10,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class DetalleOrden {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class DetalleOrden extends Base{
 
     @ManyToOne
     private OrdenDeCompra orden;

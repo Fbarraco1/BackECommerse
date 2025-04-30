@@ -1,7 +1,8 @@
 package com.ecommerce.backecommerce.repository;
 
 import com.ecommerce.backecommerce.entity.Talle;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface TalleRepository extends JpaRepository<Talle, Long> {
+@Repository
+public interface TalleRepository extends BaseRepository<Talle, Long> {
 }

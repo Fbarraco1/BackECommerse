@@ -1,7 +1,8 @@
 package com.ecommerce.backecommerce.repository;
 
 import com.ecommerce.backecommerce.entity.Producto;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface ProductoRepository extends JpaRepository<Producto, Long> {
+@Repository
+public interface ProductoRepository extends BaseRepository<Producto, Long> {
 }

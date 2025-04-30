@@ -7,11 +7,7 @@ import lombok.Setter;
 
 @Entity
 @Getter @Setter @AllArgsConstructor @NoArgsConstructor
-public class TalleProducto {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+public class TalleProducto extends Base{
     @ManyToOne
     private Producto producto;
 
