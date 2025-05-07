@@ -1,12 +1,7 @@
 package com.ecommerce.backecommerce.entity;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.MappedSuperclass;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
@@ -20,5 +15,7 @@ public abstract class Base implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     protected Long id;
-    private Boolean Activo ;
+
+    private Boolean activo=true ;
+
 }

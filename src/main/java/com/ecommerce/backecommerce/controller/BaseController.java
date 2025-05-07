@@ -46,5 +46,18 @@ public abstract class BaseController<E extends Base, ID extends Serializable> {
         service.eliminar(id);
     }
 
+    @PatchMapping("/desactivar/{id}")
+    public ResponseEntity<Void> eliminadoLogico(@PathVariable ID id) throws Exception {
+        service.eliminadoLogico(id);
+        return ResponseEntity.noContent().build();
+    }
+/*
+
+    @PatchMapping("/activar/{id}")
+    public ResponseEntity<Void> activarEntidad(@PathVariable ID id) throws Exception {
+        service.activarEntidad(id);
+        return ResponseEntity.noContent().build();
+    }
+*/
 }
 

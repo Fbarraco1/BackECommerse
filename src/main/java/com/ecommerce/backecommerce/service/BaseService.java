@@ -64,5 +64,36 @@ public abstract class BaseService<E extends Base, ID extends Serializable> {
         }
 
     }
+
+    @Transactional
+    public void eliminadoLogico(ID id) throws Exception {
+        try {
+            Optional<E> optionalEntidad = baseRepository.findById(id);
+            if (optionalEntidad.isPresent()) {
+                optionalEntidad.get().setActivo(false);
+                baseRepository.save(optionalEntidad.get());
+            } else {
+                throw new Exception("Entidad no encontrada con ID: " + id);
+            }
+        } catch (Exception ex) {
+            throw new Exception("Error al realizar eliminación lógica: " + ex.getMessage());
+        }
+    }
+/*
+    @Transactional
+    public void activarEntidad(ID id) throws Exception {
+        try {
+            Optional<E> optionalEntidad = baseRepository.findById(id);
+            if (optionalEntidad.isPresent()) {
+                 optionalEntidad.get().setActivo(true);
+                baseRepository.save(optionalEntidad.get()); // Guardamos los cambios
+            } else {
+                throw new Exception("Entidad no encontrada con ID: " + id);
+            }
+        } catch (Exception ex) {
+            throw new Exception("Error al activar la entidad: " + ex.getMessage());
+        }
+    }
+*/
 }
 
