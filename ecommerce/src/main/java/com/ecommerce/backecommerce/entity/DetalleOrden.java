@@ -16,7 +16,7 @@ public class DetalleOrden extends Base{
     private OrdenDeCompra orden;
 
     @ManyToOne
-    private com.ecommerce.backecommerce.entity.Producto producto;
+    private Producto producto;
 
     private Integer cantidad;
 }

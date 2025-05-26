@@ -2,6 +2,7 @@ package com.ecommerce.backecommerce.service;
 
 import com.ecommerce.backecommerce.dto.AuthenticationRequest;
 import com.ecommerce.backecommerce.dto.AuthenticationResponse;
+import com.ecommerce.backecommerce.entity.Rol;
 import com.ecommerce.backecommerce.entity.Usuario;
 import com.ecommerce.backecommerce.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +39,9 @@ public class AuthenticationService {
         }
 
         usuario.setContrasenia(passwordEncoder.encode(usuario.getContrasenia()));
+        if (usuario.getRol() == null) {
+            usuario.setRol(Rol.USER);
+        }
         Usuario savedUser = usuarioRepository.save(usuario);
 
         String jwtToken = jwtService.generateToken(savedUser);

@@ -14,6 +14,6 @@ public class Talle extends Base{
     private String tipoTalle;
 
     @ManyToOne
-    private com.ecommerce.backecommerce.entity.Tipo tipo;
+    private Tipo tipo;
 }
 

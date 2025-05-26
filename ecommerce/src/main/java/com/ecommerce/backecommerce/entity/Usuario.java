@@ -1,9 +1,6 @@
 package com.ecommerce.backecommerce.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,12 +18,13 @@ public class Usuario extends Base implements UserDetails {
     private String nombre;
     private String email;
     private String contrasenia;
-    private String rol;
+
+    @Enumerated(EnumType.STRING)
+    private Rol rol;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Simple rol-based authority
-        return List.of(() -> rol);
+        return List.of(() -> "ROLE_" + rol.name());
     }
 
     @Override

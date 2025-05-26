@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 public class OrdenDeCompra extends Base{
     @ManyToOne
-    private com.ecommerce.backecommerce.entity.Usuario usuario;
+    private Usuario usuario;
 
     private LocalDate fecha;
 
