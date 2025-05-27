@@ -57,4 +57,32 @@ public class ImagenProductoService extends BaseService<ImagenProducto, Long> {
             throw new Exception("Error al subir la imagen: " + e.getMessage());
         }
     }
+    public void eliminarImagen(Long imagenId, Long productoId) throws Exception {
+        ImagenProducto imagen = imagenProductoRepository.findById(imagenId)
+                .orElseThrow(() -> new Exception("Imagen no encontrada con ID: " + imagenId));
+
+        // Validar que pertenezca al producto
+        if (imagen.getProducto() == null || !imagen.getProducto().getId().equals(productoId)) {
+            throw new Exception("La imagen no pertenece al producto con ID: " + productoId);
+        }
+
+        // Obtener el public_id de Cloudinary desde la URL para poder eliminar la imagen
+        String publicId = extraerPublicId(imagen.getUrl());
+
+        try {
+            cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+        } catch (Exception e) {
+            throw new Exception("Error al eliminar imagen de Cloudinary: " + e.getMessage());
+        }
+
+        // Eliminar del repositorio
+        imagenProductoRepository.delete(imagen);
+    }
+
+    // Método auxiliar para extraer el public_id desde la URL
+    private String extraerPublicId(String url) {
+        String[] partes = url.split("/");
+        String nombreConExtension = partes[partes.length - 1];
+        return nombreConExtension.split("\\.")[0]; // eliminar la extensión
+    }
 }

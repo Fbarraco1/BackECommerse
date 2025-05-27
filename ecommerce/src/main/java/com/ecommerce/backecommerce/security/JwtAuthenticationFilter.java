@@ -32,24 +32,49 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String jwt;
         final String username;
 
+        System.out.println("=== JWT Filter Debug ===");
+        System.out.println("Auth Header: " + authHeader);
+
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            System.out.println("No valid Authorization header found");
             filterChain.doFilter(request, response);
             return;
         }
 
         jwt = authHeader.substring(7);
-        username = jwtService.extractUsername(jwt);
+        System.out.println("JWT Token: " + jwt.substring(0, Math.min(jwt.length(), 50)) + "...");
+
+        try {
+            username = jwtService.extractUsername(jwt);
+            System.out.println("Extracted username: " + username);
+        } catch (Exception e) {
+            System.out.println("Error extracting username: " + e.getMessage());
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-            if (jwtService.isTokenValid(jwt, userDetails)) {
-                UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            try {
+                UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+                System.out.println("User found: " + userDetails.getUsername());
 
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+                if (jwtService.isTokenValid(jwt, userDetails)) {
+                    System.out.println("Token is valid, setting authentication");
+                    UsernamePasswordAuthenticationToken authToken =
+                            new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                } else {
+                    System.out.println("Token is NOT valid");
+                }
+            } catch (Exception e) {
+                System.out.println("Error loading user: " + e.getMessage());
             }
+        } else {
+            System.out.println("Username is null or authentication already exists");
         }
+
         filterChain.doFilter(request, response);
     }
 }
