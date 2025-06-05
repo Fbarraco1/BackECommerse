@@ -1,5 +1,6 @@
 package com.ecommerce.backecommerce.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -28,6 +29,9 @@ public class Producto extends Base {
     @JsonManagedReference
     private List<ImagenProducto> imagenes = new ArrayList<>();
 
-    @ManyToOne
+    // Relación con categoría
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "categoria_id", nullable = false)
+    @JsonBackReference("categoria-productos")
     private Categoria categoria;
 }
