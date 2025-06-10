@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface TipoRepository extends BaseRepository<Tipo, Long> {
-
+/*
     // Buscar por nombre (case insensitive)
     @Query("SELECT t FROM Tipo t WHERE LOWER(t.nombre) = LOWER(:nombre) AND t.activo = true")
     Optional<Tipo> buscarPorNombre(@Param("nombre") String nombre);
@@ -26,4 +26,6 @@ public interface TipoRepository extends BaseRepository<Tipo, Long> {
     // Verificar si existe por nombre excluyendo un ID específico
     @Query("SELECT COUNT(t) > 0 FROM Tipo t WHERE LOWER(t.nombre) = LOWER(:nombre) AND t.id != :id AND t.activo = true")
     boolean existePorNombreExcluyendoId(@Param("nombre") String nombre, @Param("id") Long id);
+*/
 }
+

@@ -32,6 +32,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/productos/**").permitAll() // permite ver productos sin autenticació
+                        .requestMatchers(HttpMethod.GET, "/categorias/**").permitAll() // permite ver categorias sin autenticació
+                        .requestMatchers(HttpMethod.GET, "/tipos/**").permitAll() // permite ver tipos sin autenticació
+
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

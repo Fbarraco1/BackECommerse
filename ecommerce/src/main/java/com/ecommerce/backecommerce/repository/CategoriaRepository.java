@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface CategoriaRepository extends BaseRepository<Categoria, Long> {
-    // Buscar categorías por tipo
+  /*  // Buscar categorías por tipo
     @Query("SELECT c FROM Categoria c WHERE c.tipo.id = :idTipo AND c.activo = true")
     List<Categoria> buscarPorTipo(@Param("idTipo") Long idTipo);
 
@@ -29,4 +29,6 @@ public interface CategoriaRepository extends BaseRepository<Categoria, Long> {
     // Verificar si existe por nombre excluyendo un ID específico
     @Query("SELECT COUNT(c) > 0 FROM Categoria c WHERE LOWER(c.nombre) = LOWER(:nombre) AND c.id != :id AND c.activo = true")
     boolean existePorNombreExcluyendoId(@Param("nombre") String nombre, @Param("id") Long id);
+*/
 }
+

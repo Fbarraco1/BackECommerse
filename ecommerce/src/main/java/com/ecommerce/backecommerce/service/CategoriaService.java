@@ -21,7 +21,7 @@ public class CategoriaService extends BaseService<Categoria, Long> {
         super(categoriaRepository);
         this.categoriaRepository = categoriaRepository;
     }
-
+/*
     // Buscar categorías por tipo
     @Transactional(readOnly = true)
     public List<Categoria> buscarPorTipo(Long idTipo) throws Exception {
@@ -86,5 +86,5 @@ public class CategoriaService extends BaseService<Categoria, Long> {
         if (existe) {
             throw new Exception("Ya existe una categoría con ese nombre");
         }
-    }
+    }*/
 }

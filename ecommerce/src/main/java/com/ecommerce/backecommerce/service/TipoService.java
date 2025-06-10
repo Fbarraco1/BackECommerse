@@ -19,7 +19,7 @@ public class TipoService extends BaseService<Tipo, Long> {
         super(tipoRepository);
         this.tipoRepository = tipoRepository;
     }
-
+/*
     // Buscar por nombre
     @Transactional(readOnly = true)
     public Optional<Tipo> buscarPorNombre(String nombre) throws Exception {
@@ -93,5 +93,5 @@ public class TipoService extends BaseService<Tipo, Long> {
         if (existe) {
             throw new Exception("Ya existe un tipo con ese nombre");
         }
-    }
+    }*/
 }

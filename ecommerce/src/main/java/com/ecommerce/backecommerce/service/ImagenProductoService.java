@@ -85,4 +85,8 @@ public class ImagenProductoService extends BaseService<ImagenProducto, Long> {
         String nombreConExtension = partes[partes.length - 1];
         return nombreConExtension.split("\\.")[0]; // eliminar la extensión
     }
+
+    public ImagenProducto guardar(ImagenProducto imagenProducto) {
+        return imagenProductoRepository.save(imagenProducto);
+    }
 }
