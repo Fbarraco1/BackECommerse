@@ -32,4 +32,8 @@ public class ProductoService extends BaseService<Producto, Long> {
         }
         return productoCriteriaRepository.filtrarProductos(tipoId, categoriaId, color, marca, precioMin, precioMax);
     }
+
+    public List<Producto> listarConCategoria() {
+        return ((ProductoRepository) baseRepository).findAll();
+    }
 }

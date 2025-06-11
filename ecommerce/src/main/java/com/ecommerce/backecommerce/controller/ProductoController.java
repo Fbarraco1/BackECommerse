@@ -21,6 +21,17 @@ public class ProductoController extends BaseController<Producto, Long> {
         this.productoService = productoService;
     }
 
+    @GetMapping("/admin/productos")
+    public ResponseEntity<List<Producto>> getTodosConCategoria() {
+        try {
+            List<Producto> productos = productoService.listarConCategoria();
+            return ResponseEntity.ok(productos);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+
     @GetMapping("/filtrar")
     public ResponseEntity<List<Producto>> filtrarProductos(
             @RequestParam(required = false) Long tipoId,

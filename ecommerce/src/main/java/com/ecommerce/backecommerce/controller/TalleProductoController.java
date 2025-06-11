@@ -1,5 +1,6 @@
 package com.ecommerce.backecommerce.controller;
 
+import com.ecommerce.backecommerce.dto.TalleProductoDTO;
 import com.ecommerce.backecommerce.entity.TalleProducto;
 import com.ecommerce.backecommerce.repository.TalleProductoRepository;
 import com.ecommerce.backecommerce.service.TalleProductoService;
@@ -27,6 +28,20 @@ public class TalleProductoController extends BaseController<TalleProducto, Long>
     // Los métodos CRUD básicos los hereda de BaseController
     // Solo agregamos los métodos específicos de validación
 
+    @GetMapping("/dto")
+    public ResponseEntity<List<TalleProductoDTO>> listarDTO() {
+        try {
+            List<TalleProducto> entities = talleProductoService.listar();
+            List<TalleProductoDTO> dtos = entities.stream()
+                    .map(TalleProductoDTO::new)
+                    .toList();
+            return ResponseEntity.ok(dtos);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+
     // Endpoint para validar consistencia manual
     @PostMapping("/validar-consistencia/{productoId}")
     public ResponseEntity<?> validarConsistencia(@PathVariable Long productoId) {
@@ -53,10 +68,13 @@ public class TalleProductoController extends BaseController<TalleProducto, Long>
 
     // Endpoint para obtener talles por producto
     @GetMapping("/producto/{productoId}")
-    public ResponseEntity<List<TalleProducto>> getTallesPorProducto(@PathVariable Long productoId) {
+    public ResponseEntity<List<TalleProductoDTO>> getTallesPorProducto(@PathVariable Long productoId) {
         try {
             List<TalleProducto> talles = talleProductoService.getTallesPorProducto(productoId);
-            return ResponseEntity.ok(talles);
+            List<TalleProductoDTO> dtos = talles.stream()
+                    .map(TalleProductoDTO::new)
+                    .toList();
+            return ResponseEntity.ok(dtos);
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }

@@ -28,6 +28,10 @@ public class TalleProductoService extends BaseService<TalleProducto, Long> {
         this.talleProductoRepository = talleProductoRepository;
     }
 
+    public List<TalleProducto> listar() {
+        return talleProductoRepository.findAll();
+    }
+
     @Override
     public TalleProducto crear(TalleProducto talleProducto) throws Exception {
         // Validar antes de guardar

@@ -53,4 +53,5 @@ public class ProductoCriteriaRepository {
         query.where(predicates.toArray(new Predicate[0]));
         return entityManager.createQuery(query).getResultList();
     }
+
 }
