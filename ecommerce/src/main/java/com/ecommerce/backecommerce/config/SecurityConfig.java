@@ -30,11 +30,52 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/productos/**").permitAll() // permite ver productos sin autenticació
-                        .requestMatchers(HttpMethod.GET, "/categorias/**").permitAll() // permite ver categorias sin autenticació
-                        .requestMatchers(HttpMethod.GET, "/tipos/**").permitAll() // permite ver tipos sin autenticació
 
+                        // === RUTAS PÚBLICAS (visitante) ===
+                        .requestMatchers(
+                                "api/auth/**",                   // login, registro
+                                "/productos/**",              // navegación general
+                                "/categorias/**",
+                                "/api/imagenes/**",
+                                "/talles/**",
+                                "/producto/**",
+                                "/cantidad/**",
+                                "/tipos/**",
+                                "/talleproductos/**"
+                        ).permitAll()
+
+                        // === RUTAS SÓLO PARA USUARIOS LOGUEADOS (USER) ===
+                        .requestMatchers(
+                                "/direccion/**",
+                                "/ordendecompra/**",
+                                "/detalleorden/**"
+                        ).hasRole("USER")
+
+                        // === CONTROL POR MÉTODO PARA BLOQUEAR CAMBIOS A VISITANTES O USERS ===
+                        .requestMatchers(HttpMethod.POST, "/productos/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/productos/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/productos/**").hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.POST, "/categorias/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/categorias/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/categorias/**").hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.POST, "/talles/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/talles/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/talles/**").hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.POST, "/api/imagenes/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/imagenes/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/imagenes/**").hasRole("ADMIN")
+
+                        // === RUTAS DE ADMINISTRADOR ===
+                        .requestMatchers(
+                                "/productos/admin/productos/**",
+                                "/api/admin/**",
+                                "/categorias/**"
+                        ).hasRole("ADMIN")
+
+                        // === TODO LO DEMÁS REQUIERE AUTENTICACIÓN ===
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

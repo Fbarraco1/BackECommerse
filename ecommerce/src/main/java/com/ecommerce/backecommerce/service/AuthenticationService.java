@@ -47,6 +47,10 @@ public class AuthenticationService {
         String jwtToken = jwtService.generateToken(savedUser);
         return new AuthenticationResponse(jwtToken);
     }
+    public Usuario getUserFromToken(String token) {
+        String email = jwtService.extractUsername(token); // extrae el email del token
+        return usuarioRepository.findByEmail(email).orElseThrow(); // o un DTO si preferís
+    }
 
 
 }
