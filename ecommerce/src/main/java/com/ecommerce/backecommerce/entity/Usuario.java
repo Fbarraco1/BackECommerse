@@ -22,6 +22,9 @@ public class Usuario extends Base implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Rol rol;
 
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Direccion> direcciones;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(() -> "ROLE_" + rol.name());
@@ -39,21 +42,21 @@ public class Usuario extends Base implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return true; // o lógica propia
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true; // o lógica propia
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true; // o lógica propia
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return true; // o lógica propia
+        return true;
     }
 }

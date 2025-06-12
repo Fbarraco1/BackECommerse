@@ -1,9 +1,7 @@
 package com.ecommerce.backecommerce.entity;
+
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -13,13 +11,16 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrdenDeCompra extends Base{
+public class OrdenDeCompra extends Base {
+
     @ManyToOne
     private Usuario usuario;
 
+    @ManyToOne
+    private Direccion direccionEntrega;
+
     private LocalDate fecha;
 
-    @OneToMany(mappedBy = "orden", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "orden", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DetalleOrden> detalle;
 }
-

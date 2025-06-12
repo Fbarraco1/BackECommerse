@@ -37,6 +37,7 @@ dependencies {
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
     implementation("org.springframework.security:spring-security-crypto")
     implementation ("com.cloudinary:cloudinary-http44:1.37.0")
+    implementation("com.mercadopago:sdk-java:2.2.0")
 
 }
 

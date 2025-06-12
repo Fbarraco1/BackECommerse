@@ -1,15 +1,26 @@
 package com.ecommerce.backecommerce.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
 import java.util.List;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class MercadoPagoPaymentRequestDTO {
-    private List<Long> productIds;
+    private List<ItemDTO> items;
 
-    public List<Long> getProductIds() {
-        return productIds;
-    }
-
-    public void setProductIds(List<Long> productIds) {
-        this.productIds = productIds;
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ItemDTO {
+        private Long id;
+        private String nombre;
+        private String descripcion;
+        private Integer cantidad;
+        private BigDecimal precio;
     }
 }

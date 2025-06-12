@@ -1,16 +1,14 @@
 package com.ecommerce.backecommerce.entity;
+
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class DetalleOrden extends Base{
+public class DetalleOrden extends Base {
 
     @ManyToOne
     private OrdenDeCompra orden;
@@ -20,4 +18,3 @@ public class DetalleOrden extends Base{
 
     private Integer cantidad;
 }
-
