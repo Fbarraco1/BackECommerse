@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 @Service
 public class MercadoPagoService {
 
-    @Value("${mercadopago.access-token}")
+    @Value("${mercadopago.access.token}")
     private String mercadoPagoAccessToken;
 
     public String crearPreferencia(MercadoPagoPaymentRequestDTO requestDTO) throws Exception {
