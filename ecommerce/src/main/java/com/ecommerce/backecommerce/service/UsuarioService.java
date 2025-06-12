@@ -20,7 +20,7 @@ public class UsuarioService extends BaseService<Usuario, Long> {
     }
 
     // Buscar usuario por email
-    public Optional<Usuario> buscarPorEmail(String email) {
+    public Optional<Usuario> findByEmail(String email) {
         return usuarioRepository.findByEmail(email);
     }
 

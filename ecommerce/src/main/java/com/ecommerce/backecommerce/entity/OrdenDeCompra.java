@@ -1,5 +1,6 @@
 package com.ecommerce.backecommerce.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,5 +23,6 @@ public class OrdenDeCompra extends Base {
     private LocalDate fecha;
 
     @OneToMany(mappedBy = "orden", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference // Esta anotación controla la serialización
     private List<DetalleOrden> detalle;
 }

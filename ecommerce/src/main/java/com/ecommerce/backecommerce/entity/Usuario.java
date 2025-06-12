@@ -1,26 +1,20 @@
 package com.ecommerce.backecommerce.entity;
 
-
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
+@Table(name = "usuario") // ← CORREGIDO: cambié de "usuarios" a "usuario"
 public class Usuario extends Base implements UserDetails {
 
-    @Column(nullable = false)
-    private String nombre;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(nullable = false, unique = true)
     private String email;
@@ -28,30 +22,38 @@ public class Usuario extends Base implements UserDetails {
     @Column(nullable = false)
     private String contrasenia;
 
+    @Column(nullable = false)
+    private String nombre;
+
+
+
+    @Column(name = "activo")
+    private boolean activo = true;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Rol rol;
+    private Rol rol = Rol.USER;
 
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JsonManagedReference
-    @Builder.Default
-    private List<Direccion> direcciones = new ArrayList<>();
+    // Relaciones
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Direccion> direcciones;
 
-    // Método helper para agregar direcciones
-    public void addDireccion(Direccion direccion) {
-        direcciones.add(direccion);
-        direccion.setUsuario(this);
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<OrdenDeCompra> ordenes;
+
+    // Constructores
+    public Usuario() {}
+
+    public Usuario(String email, String contrasenia, String nombre) {
+        this.email = email;
+        this.contrasenia = contrasenia;
+        this.nombre = nombre;
     }
 
-    // Método helper para remover direcciones
-    public void removeDireccion(Direccion direccion) {
-        direcciones.remove(direccion);
-        direccion.setUsuario(null);
-    }
-
+    // Implementación de UserDetails
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(() -> "ROLE_" + rol.name());
+        return List.of(new SimpleGrantedAuthority("ROLE_" + rol.name()));
     }
 
     @Override
@@ -81,6 +83,71 @@ public class Usuario extends Base implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return activo;
+    }
+
+    // Getters y Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getContrasenia() {
+        return contrasenia;
+    }
+
+    public void setContrasenia(String contrasenia) {
+        this.contrasenia = contrasenia;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public boolean isActivo() {
+        return activo;
+    }
+
+    public void setActivo(boolean activo) {
+        this.activo = activo;
+    }
+
+    public Rol getRol() {
+        return rol;
+    }
+
+    public void setRol(Rol rol) {
+        this.rol = rol;
+    }
+
+    public List<Direccion> getDirecciones() {
+        return direcciones;
+    }
+
+    public void setDirecciones(List<Direccion> direcciones) {
+        this.direcciones = direcciones;
+    }
+
+    public List<OrdenDeCompra> getOrdenes() {
+        return ordenes;
+    }
+
+    public void setOrdenes(List<OrdenDeCompra> ordenes) {
+        this.ordenes = ordenes;
     }
 }

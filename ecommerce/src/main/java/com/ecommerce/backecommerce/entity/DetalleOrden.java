@@ -1,5 +1,7 @@
+// DetalleOrden.java
 package com.ecommerce.backecommerce.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,6 +13,7 @@ import lombok.*;
 public class DetalleOrden extends Base {
 
     @ManyToOne
+    @JsonBackReference // Esta anotación evita la serialización de vuelta
     private OrdenDeCompra orden;
 
     @ManyToOne

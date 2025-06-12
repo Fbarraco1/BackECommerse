@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/usuarios")
 public class UsuarioController extends BaseController<Usuario, Long>{
-    @Autowired
+
     private UsuarioService usuarioService;
 
     public UsuarioController(UsuarioService usuarioService) {

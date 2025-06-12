@@ -2,12 +2,11 @@ package com.ecommerce.backecommerce.controller;
 
 import com.ecommerce.backecommerce.entity.Direccion;
 import com.ecommerce.backecommerce.service.DireccionService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/direccion")
+@RequestMapping("/direccion") // Tu mapping personalizado
 public class DireccionController extends BaseController<Direccion, Long> {
 
     private final DireccionService direccionService;
@@ -17,17 +16,18 @@ public class DireccionController extends BaseController<Direccion, Long> {
         this.direccionService = direccionService;
     }
 
-    // Método específico para crear dirección con usuario ID en la URL
+    // Tu endpoint personalizado
     @PostMapping("/usuario/{usuarioId}")
     public ResponseEntity<Direccion> crearDireccionParaUsuario(
             @PathVariable Long usuarioId,
             @RequestBody Direccion direccion) throws Exception {
 
+        // AQUÍ está el fix: llamar al método correcto
         Direccion direccionCreada = direccionService.crearDireccionParaUsuario(usuarioId, direccion);
         return ResponseEntity.ok(direccionCreada);
     }
 
-    // Sobrescribir el método crear para mejor manejo de errores
+    // Opcional: Sobrescribir el método crear original para mejor manejo de errores
     @Override
     @PostMapping()
     public ResponseEntity<Direccion> crear(@RequestBody Direccion direccion) throws Exception {
