@@ -35,10 +35,10 @@ public abstract class BaseController<E extends Base, ID extends Serializable> {
         return ResponseEntity.ok(entidadCreada);
     }
 
-    @PutMapping()
-    public ResponseEntity<E> actualizar(@RequestBody E entity) throws Exception {
-        E entidadAct = service.actualizar(entity);
-        return ResponseEntity.ok(entidadAct);
+    @PutMapping("/{id}")
+    public ResponseEntity<E> actualizar(@PathVariable ID id, @RequestBody E entity) throws Exception {
+        E entidadActualizada = service.actualizar(entity, id);
+        return ResponseEntity.ok(entidadActualizada);
     }
 
     @DeleteMapping("/{id}")

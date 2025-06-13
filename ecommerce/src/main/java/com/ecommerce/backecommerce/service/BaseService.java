@@ -46,13 +46,18 @@ public abstract class BaseService<E extends Base, ID extends Serializable> {
     }
 
     @Transactional
-    public E actualizar(E entity) throws Exception {
-        try{
-            return baseRepository.save(entity);
-        }catch (Exception ex){
-            throw new Exception(ex.getMessage());
-        }
+    public E actualizar(E entity, ID id) throws Exception {
+        try {
+            // Validar que exista una entidad con ese ID
+            if (!baseRepository.existsById(id)) {
+                throw new Exception("Entidad con ID " + id + " no encontrada.");
+            }
 
+            // Guardar directamente la entidad (se asume que tiene el ID correcto ya seteado)
+            return baseRepository.save(entity);
+        } catch (Exception ex) {
+            throw new Exception("Error al actualizar: " + ex.getMessage());
+        }
     }
 
     @Transactional
