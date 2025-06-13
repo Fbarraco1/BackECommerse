@@ -14,8 +14,10 @@ public class CorsConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedOrigins("*") // Permite todos los orígenes
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH") // Todos los métodos comunes
-                        .allowedHeaders("*"); // Permite cualquier header
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
+                        .allowedHeaders("*")
+                        .allowCredentials(false) // Cambiar a true si usas cookies
+                        .maxAge(3600); // Cachea configuración preflight 1 hora
             }
         };
     }

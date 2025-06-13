@@ -1,7 +1,7 @@
 package com.ecommerce.backecommerce.config;
 
 import com.ecommerce.backecommerce.security.JwtAuthenticationFilter;
-import com.ecommerce.backecommerce.service.CustomUserDetailsService; // ← Importar tu servicio
+import com.ecommerce.backecommerce.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,22 +18,30 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
-    private final CustomUserDetailsService userDetailsService; // ← Cambiar aquí
+    private final CustomUserDetailsService userDetailsService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http.csrf(csrf -> csrf.disable())
+        return http
+                .cors(cors -> {})  // Habilita CORS
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // === RUTAS PÚBLICAS (visitante) ===
+                        // Rutas públicas
                         .requestMatchers(
-                                "api/auth/**",                   // login, registro
-                                "/productos/**",              // navegación general
+                                "api/auth/**",
+                                "/productos/**",
                                 "/categorias/**",
                                 "/api/imagenes/**",
                                 "/talles/**",
@@ -43,14 +51,15 @@ public class SecurityConfig {
                                 "/talleproductos/**"
                         ).permitAll()
 
-                        // === RUTAS SÓLO PARA USUARIOS LOGUEADOS (USER) ===
+                        // Rutas para usuarios con rol USER
                         .requestMatchers(
                                 "/direccion/**",
                                 "/ordendecompra/**",
-                                "/detalleorden/**"
+                                "/detalleorden/**",
+                                "/api/pagos/crear-preferencia"
                         ).hasRole("USER")
 
-                        // === CONTROL POR MÉTODO PARA BLOQUEAR CAMBIOS A VISITANTES O USERS ===
+                        // Control por método y rol
                         .requestMatchers(HttpMethod.POST, "/productos/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/productos/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/productos/**").hasRole("ADMIN")
@@ -72,14 +81,14 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/imagenes/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/imagenes/**").hasRole("ADMIN")
 
-                        // === RUTAS DE ADMINISTRADOR ===
+                        // Rutas de administrador
                         .requestMatchers(
                                 "/productos/admin/productos/**",
                                 "/api/admin/**",
                                 "/categorias/**"
                         ).hasRole("ADMIN")
 
-                        // === TODO LO DEMÁS REQUIERE AUTENTICACIÓN ===
+                        // Cualquier otra petición requiere autenticación
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -88,10 +97,25 @@ public class SecurityConfig {
                 .build();
     }
 
+    // Configuración de CORS para Spring Security
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173")); // Tu frontend
+        configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE","OPTIONS","PATCH"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowCredentials(false); // Cambia a true si usás cookies
+        configuration.setMaxAge(3600L);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider auth = new DaoAuthenticationProvider();
-        auth.setUserDetailsService(userDetailsService); // ← Usar tu servicio
+        auth.setUserDetailsService(userDetailsService);
         auth.setPasswordEncoder(passwordEncoder());
         return auth;
     }
