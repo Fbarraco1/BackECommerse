@@ -6,6 +6,7 @@ import com.ecommerce.backecommerce.entity.*;
 import com.ecommerce.backecommerce.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +35,8 @@ public class OrdenDeCompraService extends BaseService<OrdenDeCompra, Long> {
 
     @Transactional
     public OrdenCompraResponseDTO crearOrden(CrearOrdenDTO dto, Usuario usuario) throws Exception {
-        Direccion direccion = direccionRepository.findByIdWithUsuario(dto.getIdDireccion())
+        // Busco la dirección y valido que sea del usuario
+        Direccion direccion = direccionRepository.findById(dto.getIdDireccion())
                 .orElseThrow(() -> new Exception("Dirección no encontrada"));
 
         if (!direccion.getUsuario().getId().equals(usuario.getId())) {
@@ -55,12 +57,12 @@ public class OrdenDeCompraService extends BaseService<OrdenDeCompra, Long> {
             Talle talle = talleRepository.findById(p.getIdTalle())
                     .orElseThrow(() -> new Exception("Talle no encontrado"));
 
-            // Validar que el talle corresponde al producto
+            // Validar que talle corresponde a producto
             if (!talle.getProducto().getId().equals(producto.getId())) {
                 throw new Exception("El talle no pertenece al producto");
             }
 
-            // Validar stock del talle
+            // Validar stock
             if (talle.getStock() < p.getCantidad()) {
                 throw new Exception("Stock insuficiente para el talle seleccionado");
             }
@@ -74,12 +76,15 @@ public class OrdenDeCompraService extends BaseService<OrdenDeCompra, Long> {
             detalle.setTalle(talle);
             detalle.setCantidad(p.getCantidad());
             detalle.setOrden(orden);
-
             detalles.add(detalle);
         }
 
+        // Seteo detalles a la orden
         orden.setDetalle(detalles);
+
+        // Guardo la orden primero para que genere ID y luego detalles se guarden por cascada
         OrdenDeCompra ordenGuardada = ordenDeCompraRepository.save(orden);
+
         return convertirADTO(ordenGuardada);
     }
 

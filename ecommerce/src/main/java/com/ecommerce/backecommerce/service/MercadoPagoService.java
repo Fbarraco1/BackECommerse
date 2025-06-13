@@ -3,6 +3,7 @@ package com.ecommerce.backecommerce.service;
 import com.ecommerce.backecommerce.dto.MercadoPagoPaymentRequestDTO;
 import com.mercadopago.MercadoPagoConfig;
 import com.mercadopago.client.preference.*;
+import com.mercadopago.exceptions.MPApiException;
 import com.mercadopago.resources.preference.Preference;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,18 @@ public class MercadoPagoService {
                             .build())
                     .collect(Collectors.toList());
 
+            System.out.println("=== Items recibidos en el request ===");
+            System.out.println("Success URL: " + "http://localhost:5173/paymentSuccess");
+            System.out.println("Pending URL: " + "http://localhost:5173/paymentPending");
+            System.out.println("Failure URL: " + "http://localhost:5173/paymentFailure");
+            requestDTO.getItems().forEach(item -> System.out.println(
+                    "ID: " + item.getId() +
+                            ", Nombre: " + item.getNombre() +
+                            ", Descripción: " + item.getDescripcion() +
+                            ", Cantidad: " + item.getCantidad() +
+                            ", Precio: " + item.getPrecio()
+            ));
+
             PreferenceBackUrlsRequest backUrls = PreferenceBackUrlsRequest.builder()
                     .success("http://localhost:5173/paymentSuccess")
                     .pending("http://localhost:5173/paymentPending")
@@ -50,13 +63,16 @@ public class MercadoPagoService {
                     .items(items)
                     .backUrls(backUrls)
                     .paymentMethods(paymentMethods)
-                    .autoReturn("approved")
                     .build();
 
             PreferenceClient client = new PreferenceClient();
             Preference preference = client.create(preferenceRequest);
 
             return preference.getInitPoint();
+        } catch (MPApiException e) {
+            String apiError = (e.getApiResponse() != null) ? e.getApiResponse().getContent() : "Sin detalle";
+            System.out.println("MPApiException: " + apiError);
+            throw new Exception("Error al crear la preferencia de pago: " + apiError, e);
         } catch (Exception e) {
             throw new Exception("Error al crear la preferencia de pago: " + e.getMessage(), e);
         }

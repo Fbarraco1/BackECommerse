@@ -1,7 +1,7 @@
 package com.ecommerce.backecommerce.config;
 
 import com.ecommerce.backecommerce.security.JwtAuthenticationFilter;
-import com.ecommerce.backecommerce.service.CustomUserDetailsService; // ← Importar tu servicio
+import com.ecommerce.backecommerce.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +17,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -24,16 +29,17 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
-    private final CustomUserDetailsService userDetailsService; // ← Cambiar aquí
+    private final CustomUserDetailsService userDetailsService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http.csrf(csrf -> csrf.disable())
+        http
+                .cors(cors -> {})  // habilita CORS sin usar .and()
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // === RUTAS PÚBLICAS (visitante) ===
                         .requestMatchers(
-                                "api/auth/**",                   // login, registro
-                                "/productos/**",              // navegación general
+                                "api/auth/**",
+                                "/productos/**",
                                 "/categorias/**",
                                 "/api/imagenes/**",
                                 "/talles/**",
@@ -42,56 +48,46 @@ public class SecurityConfig {
                                 "/tipos/**",
                                 "/talleproductos/**"
                         ).permitAll()
-
-                        // === RUTAS SÓLO PARA USUARIOS LOGUEADOS (USER) ===
                         .requestMatchers(
                                 "/direccion/**",
                                 "/ordendecompra/**",
                                 "/detalleorden/**"
                         ).hasRole("USER")
-
-                        // === CONTROL POR MÉTODO PARA BLOQUEAR CAMBIOS A VISITANTES O USERS ===
                         .requestMatchers(HttpMethod.POST, "/productos/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/productos/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/productos/**").hasRole("ADMIN")
-
                         .requestMatchers(HttpMethod.POST, "/categorias/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/categorias/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/categorias/**").hasRole("ADMIN")
-
-                        .requestMatchers(HttpMethod.POST, "/direccion/**").hasAnyRole("ADMIN","USER")
+                        .requestMatchers(HttpMethod.POST, "/direccion/**").hasAnyRole("ADMIN", "USER")
                         .requestMatchers(HttpMethod.PUT, "/direccion/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/direccion/usuario/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/direccion/**").hasRole("ADMIN")
-
                         .requestMatchers(HttpMethod.POST, "/talles/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/talles/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/talles/**").hasRole("ADMIN")
-
                         .requestMatchers(HttpMethod.POST, "/api/imagenes/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/imagenes/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/imagenes/**").hasRole("ADMIN")
-
-                        // === RUTAS DE ADMINISTRADOR ===
                         .requestMatchers(
                                 "/productos/admin/productos/**",
                                 "/api/admin/**",
                                 "/categorias/**"
                         ).hasRole("ADMIN")
-
-                        // === TODO LO DEMÁS REQUIERE AUTENTICACIÓN ===
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .build();
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
     }
+
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider auth = new DaoAuthenticationProvider();
-        auth.setUserDetailsService(userDetailsService); // ← Usar tu servicio
+        auth.setUserDetailsService(userDetailsService);
         auth.setPasswordEncoder(passwordEncoder());
         return auth;
     }
@@ -104,5 +100,18 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    // --- Aquí está el bean CORS que faltaba, necesario para que http.cors() funcione bien ---
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of("http://localhost:5173")); // Cambia si usas otro origen
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowCredentials(true); // Si usas cookies o credenciales
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 }
