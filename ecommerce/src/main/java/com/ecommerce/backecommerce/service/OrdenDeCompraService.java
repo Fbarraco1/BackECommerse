@@ -17,25 +17,26 @@ public class OrdenDeCompraService extends BaseService<OrdenDeCompra, Long> {
     private final OrdenDeCompraRepository ordenDeCompraRepository;
     private final DireccionRepository direccionRepository;
     private final ProductoRepository productoRepository;
+    private final TalleRepository talleRepository;
 
     public OrdenDeCompraService(
             OrdenDeCompraRepository ordenDeCompraRepository,
             DireccionRepository direccionRepository,
-            ProductoRepository productoRepository
+            ProductoRepository productoRepository,
+            TalleRepository talleRepository
     ) {
         super(ordenDeCompraRepository);
         this.ordenDeCompraRepository = ordenDeCompraRepository;
         this.direccionRepository = direccionRepository;
         this.productoRepository = productoRepository;
+        this.talleRepository = talleRepository;
     }
 
     @Transactional
     public OrdenCompraResponseDTO crearOrden(CrearOrdenDTO dto, Usuario usuario) throws Exception {
-        // Cargar dirección con usuario para poder hacer la validación
         Direccion direccion = direccionRepository.findByIdWithUsuario(dto.getIdDireccion())
                 .orElseThrow(() -> new Exception("Dirección no encontrada"));
 
-        // Verificar que la dirección pertenece al usuario autenticado
         if (!direccion.getUsuario().getId().equals(usuario.getId())) {
             throw new Exception("La dirección no pertenece al usuario");
         }
@@ -51,13 +52,26 @@ public class OrdenDeCompraService extends BaseService<OrdenDeCompra, Long> {
             Producto producto = productoRepository.findById(p.getIdProducto())
                     .orElseThrow(() -> new Exception("Producto no encontrado"));
 
-            // Verificar que hay suficiente stock
-            if (producto.getCantidad() < p.getCantidad()) {
-                throw new Exception("Stock insuficiente para el producto: " + producto.getNombre());
+            Talle talle = talleRepository.findById(p.getIdTalle())
+                    .orElseThrow(() -> new Exception("Talle no encontrado"));
+
+            // Validar que el talle corresponde al producto
+            if (!talle.getProducto().getId().equals(producto.getId())) {
+                throw new Exception("El talle no pertenece al producto");
             }
+
+            // Validar stock del talle
+            if (talle.getStock() < p.getCantidad()) {
+                throw new Exception("Stock insuficiente para el talle seleccionado");
+            }
+
+            // Descontar stock
+            talle.setStock(talle.getStock() - p.getCantidad());
+            talleRepository.save(talle);
 
             DetalleOrden detalle = new DetalleOrden();
             detalle.setProducto(producto);
+            detalle.setTalle(talle);
             detalle.setCantidad(p.getCantidad());
             detalle.setOrden(orden);
 
@@ -66,8 +80,6 @@ public class OrdenDeCompraService extends BaseService<OrdenDeCompra, Long> {
 
         orden.setDetalle(detalles);
         OrdenDeCompra ordenGuardada = ordenDeCompraRepository.save(orden);
-
-        // Convertir a DTO dentro de la transacción
         return convertirADTO(ordenGuardada);
     }
 
@@ -76,14 +88,12 @@ public class OrdenDeCompraService extends BaseService<OrdenDeCompra, Long> {
         dto.setId(orden.getId());
         dto.setFecha(orden.getFecha());
 
-        // Usuario básico
         OrdenCompraResponseDTO.UsuarioBasicoDTO usuarioDTO = new OrdenCompraResponseDTO.UsuarioBasicoDTO();
         usuarioDTO.setId(orden.getUsuario().getId());
         usuarioDTO.setNombre(orden.getUsuario().getNombre());
         usuarioDTO.setEmail(orden.getUsuario().getEmail());
         dto.setUsuario(usuarioDTO);
 
-        // Dirección
         OrdenCompraResponseDTO.DireccionDTO direccionDTO = new OrdenCompraResponseDTO.DireccionDTO();
         direccionDTO.setId(orden.getDireccionEntrega().getId());
         direccionDTO.setCalle(orden.getDireccionEntrega().getCalle());
@@ -91,7 +101,6 @@ public class OrdenDeCompraService extends BaseService<OrdenDeCompra, Long> {
         direccionDTO.setCp(orden.getDireccionEntrega().getCp());
         dto.setDireccionEntrega(direccionDTO);
 
-        // Detalles
         List<OrdenCompraResponseDTO.DetalleOrdenDTO> detallesDTO = orden.getDetalle().stream()
                 .map(detalle -> {
                     OrdenCompraResponseDTO.DetalleOrdenDTO detalleDTO = new OrdenCompraResponseDTO.DetalleOrdenDTO();
@@ -105,7 +114,13 @@ public class OrdenDeCompraService extends BaseService<OrdenDeCompra, Long> {
                     productoDTO.setPrecio(detalle.getProducto().getPrecio());
                     productoDTO.setMarca(detalle.getProducto().getMarca());
                     productoDTO.setColor(detalle.getProducto().getColor());
+
+                    OrdenCompraResponseDTO.TalleDTO talleDTO = new OrdenCompraResponseDTO.TalleDTO();
+                    talleDTO.setId(detalle.getTalle().getId());
+                    talleDTO.setNombre(detalle.getTalle().getNombre());
+
                     detalleDTO.setProducto(productoDTO);
+                    detalleDTO.setTalle(talleDTO);
 
                     return detalleDTO;
                 }).collect(Collectors.toList());
@@ -113,4 +128,5 @@ public class OrdenDeCompraService extends BaseService<OrdenDeCompra, Long> {
         dto.setDetalle(detallesDTO);
         return dto;
     }
+
 }

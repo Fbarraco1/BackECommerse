@@ -18,7 +18,6 @@ import java.util.List;
 @NoArgsConstructor
 public class Producto extends Base {
     private String nombre;
-    private Integer cantidad;
     private Double precio;
     private String descripcion;
     private String color;
@@ -34,4 +33,8 @@ public class Producto extends Base {
     @JoinColumn(name = "categoria_id", nullable = false)
     @JsonBackReference("categoria-productos")
     private Categoria categoria;
+
+    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Talle> talles = new ArrayList<>();
 }

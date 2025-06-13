@@ -37,6 +37,7 @@ public class OrdenCompraResponseDTO {
         private Long id;
         private Integer cantidad;
         private ProductoDTO producto;
+        private TalleDTO talle; // Nuevo campo: talle incluido en la respuesta
     }
 
     @Getter
@@ -49,4 +50,12 @@ public class OrdenCompraResponseDTO {
         private String marca;
         private String color;
     }
+
+    @Getter
+    @Setter
+    public static class TalleDTO {
+        private Long id;
+        private String nombre; // Por ejemplo "40", "M", etc.
+    }
+
 }

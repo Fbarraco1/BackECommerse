@@ -15,6 +15,7 @@ public class CrearOrdenDTO {
     @Setter
     public static class ProductoCantidadDTO {
         private Long idProducto;
+        private Long idTalle;
         private Integer cantidad;
     }
 }

@@ -19,5 +19,7 @@ public class DetalleOrden extends Base {
     @ManyToOne
     private Producto producto;
 
+    @ManyToOne
+    private Talle talle;
     private Integer cantidad;
 }
